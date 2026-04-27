@@ -1,119 +1,161 @@
-%Targeted Conference 1: 22nd EAI International Conference on Collaborative Computing: Networking, Applications and Worksharing (CCF C)
-%https://collaboratecom.eai-conferences.org/2026/
-%Deadline: May 1st, 2026. Regular papers should be 16-20 pages
+% ============= Initial tasks=======================
+% Done: 1. learn how to use VS Code + Cline + OpenRouter API  ($10- $20 initial money )
+% watch youtube
+% 2-3 hours
 
-%Targeted Conference 2: UbiComp / ISWC 2026 (CCF A) [Ryan's paper]
-%https://www.ubicomp.org/ubicomp-iswc-2026/iswc-cfp/
-%Deadline: May 17, 2026. ACM 6 pages
+% Done: 2.1 You should read the draft pdf in the old branch of git repo 
+ % https://github.com/chunhualiao/Rapids2-CompilerGPT-dot-optimization/blob/liao-old/graphviz_performance_analysis.pdf 
+ % 2 hours
+ 
+%====================Where to find things========================
+% 1. git repo for this paper
+% https://github.com/chunhualiao/Rapids2-CompilerGPT-dot-optimization
+% branch pushed by Edwyn for this paper: https://github.com/chunhualiao/Rapids2-CompilerGPT-dot-optimization/tree/Rapids2-CompilerGPT-dot-optimization-side-branch  
+% 2. paper review
+% https://openreview.net/forum?id=88zyE3fJzQ#discussion
 
-\documentclass[sigconf,natbib=false]{acmart}
-\AtBeginDocument{%
-  \providecommand\BibTeX{{%
-    Bib\TeX}}}
+% ================== Fundation and background knowledge
+% F1: Graphviz dot layout algorithm: what it does, how it is implemented, how to compile and run it
+  % check out the gitab repo,  build, and run the dot program, measure some timing info. 
+
+  % learn how to build and run the graphviz dot layout algorithm program and measure some performance.   
+ % https://gitlab.com/graphviz/graphviz
+
+ % Using VS code + cline + openrouter to help build and run, get initial performance of the algorithm
+ % https://openrouter.ai/rankings
+ % models : google/gemini-3-flash-preview , moonshotai/kimi-k2.5, x-ai/grok-4.1-fast
+
+% F2. OpenMP basics : take a few online tutorials,
+  % try to compile and run a few example OpenMP codes
+  
+% ### Key Issues Identified:
+
+% ==================  OpenMP specific issues related to dot algorithm 
+
+% Possibly repeat Edwyn's experiment described in the paper
+% branch pushed by Edwyn for this paper: https://github.com/chunhualiao/Rapids2-CompilerGPT-dot-optimization/tree/Rapids2-CompilerGPT-dot-optimization-side-branch
+
+  %%  related to Section 4.2 and 4.3 in the paper
+  
+% 4 - Algorithmic correctness of Listing 1 (transpose_step_parallel) is doubtful: marked swaps are applied sequentially without preventing adjacent/conflicting swaps; per-iteration accumulators (c0, c1) are undeclared in-scope and may be shared; use of non-standard functions (in_cross_count/out_cross_count) with no definitions.
+
+% 5 - Scheduling inconsistency: text claims dynamic scheduling for irregular workloads while code listing uses schedule(static).
+
+% 11 - Claims of false sharing reduction and detailed cache metrics lack clear, feasible measurement methodology on the stated platform.
+
+% 8- Strong determinism claim (bit-exact PNG hashes across parallel runs) is not convincingly justified given potential nondeterminism in rendering and floating-point behavior.
+
+% ================== experiment issues
+% 7- Test suite description inconsistent with results: primary evaluation described with fixed 100 nodes and varying edges, yet results emphasize 1,000–2,000-node graphs (Figure 3, Appendix G).
+    % related to Sec 4.3
+    
+% 9 - Statistical reporting gaps: CIs are claimed but not presented; 
+
+% 9.2  "power > 0.8" assertion lacks effect sizes or power analysis details; 
+
+% 9. 3 ± values in Table 2 are not defined as SD/SE/CI.
+
+% 12- Reproducibility and versioning inconsistencies (e.g., Graphviz "dev.20250825" date and missing code/data links).
+
+% ================== hardware platform specific issues
+% 1- Apple M1 architecture mischaracterized: incorrect L2 size and references to L3 cache metrics; M1 does not have a conventional CPU L3 cache.
+  %  ?? can we get a M1 apple computer? easier to reproduce the work
+
+% 2- Contradictory environment/tooling: mentions using Linux perf but experiments are on macOS; Valgrind/Helgrind use on macOS Apple Silicon is likely infeasible.
+
+% 3 - NUMA-aware optimization claims on a UMA (unified memory) system (Apple M1) are contradictory.
+
+
+% ================== writting issues
+% 6- Multiple broken or incorrect cross-references: references to non-existent Section 6 and Section 5.5; "Table ??" placeholder (page 15); mislabeling Table 3 on page 12.
+
+% 10 - Literature and related-work inaccuracies/mis-citations (e.g., [11] described as foundational for parallel graph processing; [4]/[5] mismatched to described topics).
+
+\documentclass{article}
+
+% Load the Agents4Science template
+\usepackage[preprint]{agents4science_2025}
+
+\usepackage[utf8]{inputenc} % allow utf8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+\usepackage{graphicx}       % images
+\usepackage{amsmath}        % math environments
+\usepackage{multirow}       % multirow tables
+\usepackage{array}          % extended array/tabular
+\usepackage{subcaption}     % subfigures
+\usepackage{listings}       % code listings
+\usepackage{color}          % color definitions for listings
 \usepackage{comment}
-\usepackage{subfloat}
-\usepackage{subcaption}
+\usepackage{xcolor}
 
+% Define quick commands for colored comments
+\newcommand{\hx}[1]{\textcolor{blue}{[HX: #1]}}
+
+% Code listing style configuration
+\lstset{
+    language=C,
+    basicstyle=\footnotesize\ttfamily,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    numberstyle=\tiny\color{gray},
+    numbers=left,
+    numbersep=5pt,
+    frame=single,
+    breaklines=true,
+    captionpos=b,
+    tabsize=2,
+    showstringspaces=false
+}
+
+\makeatletter
+\renewcommand{\@noticestring}{Preprint. © 2025. All rights reserved.}
 \makeatother
-%% Bibliography style
-\RequirePackage[
-  datamodel=acmdatamodel,
-  style=acmnumeric,
-  sorting=none
-  ]{biblatex}
 
-%% Declare bibliography sources (one \addbibresource command per source)
-\addbibresource{reference}
-%\renewcommand\footnotetextcopyrightpermission[1]{}
+\title{Learning to Optimize: Automated Parallel Code Generation for Graphviz Dot Layout Algorithms}
+%\title{Automating Parallelism: AI-Assisted Optimization of Hierarchical Graph Layouts}
+%\title{Parallelizing Graphviz Dot Layout Algorithm using OpenMP}
 
-\copyrightyear{2026}
-\acmYear{2026}
-%\setcopyright{cc}
-%\setcctype{by}
-\acmConference[ISWC'26]{The 30th Annual International Symposium on Wearable Computers}{October 11-15, 2026}{Shanghai, China}
-\acmBooktitle{The 30th Annual International Symposium on Wearable Computers, October 11-15, 2026, Shanghai, China}
-%\acmDOI{10.1145/3722570.3726881}
-%\acmISBN{/2025/05}
-
+\author{
+  Edwyn Estrada\textsuperscript{1},
+  Hailu Xu\textsuperscript{1},
+  Chunhua Liao \textsuperscript{2} \\
+  \textsuperscript{1}California State University, Long Beach \quad
+  \textsuperscript{2}Lawrence Livermore National Laboratory \\
+  \texttt{Edwyn.Estrada01@student.csulb.edu, hailu.xu@csulb.edu, liao6@llnl.gov}
+}
 
 \begin{document}
 
-%%
-%% The "title" command has an optional parameter,
-%% allowing the author to define a "short title" to be used in page headers.
-\title{Structured In-Context Correction in MCP-Mediated Human Authority Injection for LLM-Driven Multi-Robot Rescue}
-
-\author{Ryan~Tran, Simon~Zhang, Wenlu~Zhang, Hailu~Xu}
-\affiliation{
-  \institution{California State University, Long Beach}
-  \city{Long Beach}
-  \state{CA}
-  \country{USA}
-}
-%\email{{ryan.tran, simon.zhang01}@student.csulb.edu}
-\email{{wenlu.zhang, hailu.xu}@csulb.edu}
-
-\author{Lingfeng Tao}
-\affiliation{
-  \institution{Kennesaw State University}
-  \city{Atlanta}
-  \state{GA}
-  \country{USA}
-}
-\email{ltao2@kennesaw.edu}
-
-\author{Shengjie Xu}
-\affiliation{
-  \institution{University of Arizona}
-  \city{Tucson}
-  \state{AZ}
-  \country{USA}
-}
-\email{sjxu@arizona.edu}
-
-\author{Yu Yin, Shuai Xu}
-\affiliation{
-  \institution{Case Western Reserve University}
-  \city{Cleverland}
-  \state{OH}
-  \country{USA}
-}
-\email{{yu.yin, shuai.xu2}@case.edu}
-
-\thanks{This work is partially supported by US NSF Award \#2426470.}
-\thanks{Corresponding E-email: hailu.xu@csulb.edu (H.X.)}
-
-
-
-\renewcommand{\shortauthors}{} % Optional: Remove short author line if not needed
-%% By default, the full list of authors will be used in the page
-%% headers. Often, this list is too long, and will overlap
-%% other information printed in the page headers. This command allows
-%% the author to define a more concise list
-%% of authors' names for this purpose.
-\renewcommand{\shortauthors}{Xu et al.}
-
-
-\begin{abstract}
-Large language models (LLMs) coordinated through the Model Context Protocol (MCP) offer a principled foundation for multi-robot collaboration systems, yet existing human-in-the-loop (HITL) frameworks treat human intervention as an ad-hoc, out-of-band interrupt: the operator issues a natural-language correction and the LLM replans from scratch, retaining no structured memory of the reason for that correction. Consequently, the LLM tends to repeat the same class of error once the immediate context shifts. This paper introduces Structured Authority Injection (SAI), a mechanism that promotes human overrides to first-class MCP tool calls, typed according to three semantically distinct correction categories—constraint, priority, and strategy—and propagated as durable context entries that persist across subsequent planning cycles. We implement SAI on top of an existing MuJoCo-based multi-robot rescue simulation driven by GPT-4o and evaluate it against an unstructured baseline in which overrides are appended as free-text prompts. Across 300 controlled simulation runs (3 override types × 2 injection modes × 10 scenarios × 5 repeats), SAI reduces the post-override recurrence rate of the corrected error class by 41\% and improves mission success rate by 8.3 percentage points in complex scenarios, while requiring 27\% fewer subsequent human interventions. These results demonstrate that protocol-level structuring of human authority—rather than ad-hoc textual correction—is a high-leverage design choice for safe and efficient human–robot collaboration.
-
-\end{abstract}
-%
-
-%%
-%% Keywords. The author(s) should pick words that accurately describe
-%% the work being presented. Separate the keywords with commas.
-\keywords{Human-in-the-loop, Multi-robot Collaboration, Model Context Protocol, Human-robot Collaboration.}
-
 \maketitle
 
-\input{1_intro}
-\input{02_related}
-\input{03_design}
-%
-% ---- Bibliography ----
-%
-%% Print the bibliography
-\printbibliography
+\begin{abstract}
+We present a comprehensive AI-driven approach to OpenMP optimization for GraphViz's default hierarchical layout algorithm for directed graphs, transitioning from theoretical projections to empirical performance validation on Apple M1 architecture. Our intelligent system combines automated performance profiling, AI-powered bottleneck identification, and machine learning-enhanced code generation to achieve significant speedups in graph processing. Through extensive experimental validation, we demonstrate a peak speedup of 3.78× with 47.2\% parallel efficiency across diverse graph topologies. Key contributions include: (1) AI-guided identification of parallelization opportunities in a complex graph layout algorithm, (2) automated OpenMP code generation with correctness validation, and (3) comprehensive performance analysis on modern ARM architecture. Our approach successfully bridges the gap between theoretical optimization potential and practical performance improvements, achieving up to 73.5\% execution time reduction while maintaining algorithmic correctness across all test scenarios.
+\end{abstract}
+
+\input{0_introduction}
+\input{1_related_work}
+\input{2_design}
+\input{3_evaluation}
+\input{4_conclusion}
+\input{6_responsible_ai_statement}
+\input{6_reproducibility_statement}
+%\input{7_agents4science_ai_involvement_checklist}
+%\input{7_agents4science_paper_checklist}
+
+
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\input{5_appendix}
+
 
 \end{document}
