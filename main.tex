@@ -1,0 +1,119 @@
+%Targeted Conference 1: 22nd EAI International Conference on Collaborative Computing: Networking, Applications and Worksharing (CCF C)
+%https://collaboratecom.eai-conferences.org/2026/
+%Deadline: May 1st, 2026. Regular papers should be 16-20 pages
+
+%Targeted Conference 2: UbiComp / ISWC 2026 (CCF A) [Ryan's paper]
+%https://www.ubicomp.org/ubicomp-iswc-2026/iswc-cfp/
+%Deadline: May 17, 2026. ACM 6 pages
+
+\documentclass[sigconf,natbib=false]{acmart}
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    Bib\TeX}}}
+\usepackage{comment}
+\usepackage{subfloat}
+\usepackage{subcaption}
+
+\makeatother
+%% Bibliography style
+\RequirePackage[
+  datamodel=acmdatamodel,
+  style=acmnumeric,
+  sorting=none
+  ]{biblatex}
+
+%% Declare bibliography sources (one \addbibresource command per source)
+\addbibresource{reference}
+%\renewcommand\footnotetextcopyrightpermission[1]{}
+
+\copyrightyear{2026}
+\acmYear{2026}
+%\setcopyright{cc}
+%\setcctype{by}
+\acmConference[ISWC'26]{The 30th Annual International Symposium on Wearable Computers}{October 11-15, 2026}{Shanghai, China}
+\acmBooktitle{The 30th Annual International Symposium on Wearable Computers, October 11-15, 2026, Shanghai, China}
+%\acmDOI{10.1145/3722570.3726881}
+%\acmISBN{/2025/05}
+
+
+\begin{document}
+
+%%
+%% The "title" command has an optional parameter,
+%% allowing the author to define a "short title" to be used in page headers.
+\title{Structured In-Context Correction in MCP-Mediated Human Authority Injection for LLM-Driven Multi-Robot Rescue}
+
+\author{Ryan~Tran, Simon~Zhang, Wenlu~Zhang, Hailu~Xu}
+\affiliation{
+  \institution{California State University, Long Beach}
+  \city{Long Beach}
+  \state{CA}
+  \country{USA}
+}
+%\email{{ryan.tran, simon.zhang01}@student.csulb.edu}
+\email{{wenlu.zhang, hailu.xu}@csulb.edu}
+
+\author{Lingfeng Tao}
+\affiliation{
+  \institution{Kennesaw State University}
+  \city{Atlanta}
+  \state{GA}
+  \country{USA}
+}
+\email{ltao2@kennesaw.edu}
+
+\author{Shengjie Xu}
+\affiliation{
+  \institution{University of Arizona}
+  \city{Tucson}
+  \state{AZ}
+  \country{USA}
+}
+\email{sjxu@arizona.edu}
+
+\author{Yu Yin, Shuai Xu}
+\affiliation{
+  \institution{Case Western Reserve University}
+  \city{Cleverland}
+  \state{OH}
+  \country{USA}
+}
+\email{{yu.yin, shuai.xu2}@case.edu}
+
+\thanks{This work is partially supported by US NSF Award \#2426470.}
+\thanks{Corresponding E-email: hailu.xu@csulb.edu (H.X.)}
+
+
+
+\renewcommand{\shortauthors}{} % Optional: Remove short author line if not needed
+%% By default, the full list of authors will be used in the page
+%% headers. Often, this list is too long, and will overlap
+%% other information printed in the page headers. This command allows
+%% the author to define a more concise list
+%% of authors' names for this purpose.
+\renewcommand{\shortauthors}{Xu et al.}
+
+
+\begin{abstract}
+Large language models (LLMs) coordinated through the Model Context Protocol (MCP) offer a principled foundation for multi-robot collaboration systems, yet existing human-in-the-loop (HITL) frameworks treat human intervention as an ad-hoc, out-of-band interrupt: the operator issues a natural-language correction and the LLM replans from scratch, retaining no structured memory of the reason for that correction. Consequently, the LLM tends to repeat the same class of error once the immediate context shifts. This paper introduces Structured Authority Injection (SAI), a mechanism that promotes human overrides to first-class MCP tool calls, typed according to three semantically distinct correction categories—constraint, priority, and strategy—and propagated as durable context entries that persist across subsequent planning cycles. We implement SAI on top of an existing MuJoCo-based multi-robot rescue simulation driven by GPT-4o and evaluate it against an unstructured baseline in which overrides are appended as free-text prompts. Across 300 controlled simulation runs (3 override types × 2 injection modes × 10 scenarios × 5 repeats), SAI reduces the post-override recurrence rate of the corrected error class by 41\% and improves mission success rate by 8.3 percentage points in complex scenarios, while requiring 27\% fewer subsequent human interventions. These results demonstrate that protocol-level structuring of human authority—rather than ad-hoc textual correction—is a high-leverage design choice for safe and efficient human–robot collaboration.
+
+\end{abstract}
+%
+
+%%
+%% Keywords. The author(s) should pick words that accurately describe
+%% the work being presented. Separate the keywords with commas.
+\keywords{Human-in-the-loop, Multi-robot Collaboration, Model Context Protocol, Human-robot Collaboration.}
+
+\maketitle
+
+\input{1_intro}
+\input{02_related}
+\input{03_design}
+%
+% ---- Bibliography ----
+%
+%% Print the bibliography
+\printbibliography
+
+\end{document}
